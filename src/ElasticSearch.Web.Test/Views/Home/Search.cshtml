@@ -1,0 +1,146 @@
+﻿@using Nest
+@using System.Text.Encodings.Web
+@model SearchViewModel
+@{
+    ViewData["Title"] = "Search";
+}
+<div class="container">
+    @using (Html.BeginForm("Search", "Home", FormMethod.Get))
+    {
+    @await Html.PartialAsync("_QueryBox", Model.Form)
+    }
+    @if (Model.Total > 0)
+    {
+    <div class="row" style="margin-top:20px;">
+        <div class="col-lg-9">
+            @foreach (var hit in Model.Hits)
+            {
+            var product = (ProductModel)hit.Source;
+            var highlights = (HighlightFieldDictionary)hit.Highlights;
+            <div class="media">
+                <a class="pull-left" href="#">
+                    <img class="media-object" src="http://placehold.it/64x64" alt="Media Object">
+                </a>
+                <div class="media-body">
+                    <h4 class="media-heading">
+                        @if (highlights?.Any(h => h.Key.ToLowerInvariant() == "Name".ToLowerInvariant()) == true)
+                        {
+
+                        <text> @Html.Raw(string.Join("...", @highlights.First(p => p.Key.ToLowerInvariant() == "Name".ToLowerInvariant()).Value.Highlights)) </text>
+                        }
+                        else
+                        {
+                        <text> @product.Name </text>
+                        }
+                    </h4>
+                    @if (highlights?.Any(h => h.Key.ToLowerInvariant() == "ShortDescription".ToLowerInvariant()) == true)
+                    {
+
+                    <text> @Html.Raw(string.Join("...", highlights.First(p => p.Key.ToLowerInvariant() == "ShortDescription".ToLowerInvariant()).Value.Highlights)) </text>
+                    }
+                    else
+                    {
+                    <text> @product.ShortDescription </text>
+                    }
+                    <h5>评论数：@product.ReviewCount</h5>
+                </div>
+            </div>
+            }
+        </div>
+        <div class="col-lg-3">
+            @*@Html.Partial("Aggregations", Model)*@
+        </div>
+    </div>
+    }
+</div>
+@section Scripts{
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        setupTypeAhead();
+
+        function setupTypeAhead() {
+
+            $("#query").autocomplete({
+                minLength: 1,
+                source: function (request, response) {
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "/home/suggest",
+                        data: JSON.stringify({ query: request.term }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                select: function (event, ui) {  
+                    alert("Selected: " + ui.item.name + " aka " + ui.item.id);
+                }
+            }).autocomplete("instance")._renderItem = function (ul, item) {
+                return $("<li>")
+                    .append("<div><h4>" + item.name + "</h4><br>" + item.shortDescription + "</div>")
+                    .appendTo(ul);
+            };
+            //var typeAheadOptions = {
+            //    hint: true,
+            //    highlight: true,
+            //    minLength: 1
+            //};
+
+            //var remoteHandler = function (query, process) {
+            //    return $.ajax(
+            //        {
+            //            cache: false,
+            //            type: "POST",
+            //            url: "/home/suggest",
+            //            data: JSON.stringify({ Query: query }),
+            //            contentType: "application/json; charset=utf-8",
+            //            dataType: "json",
+            //            success: function (suggestions) {
+            //                console.log(suggestions);
+            //                process(suggestions);
+            //            }
+            //        });
+            //};
+
+            //$('#query').typeahead(typeAheadOptions,
+            //    {
+            //        displayKey: "id",
+            //        templates: {
+            //            empty: [
+            //                '<div class="lead">',
+            //                'no suggestions found for current prefix',
+            //                '</div>'
+            //            ].join('\n'),
+            //            suggestion: function (suggestion) {
+            //                return [
+            //                    '<h4 class="text-primary">',
+            //                    suggestion.id,
+            //                    '<span class="text-humble pull-right">',
+            //                    suggestion.downloadCount + " downloads",
+            //                    '</span>',
+            //                    '</h5>',
+            //                    '<h5 class="text-primary">',
+            //                    suggestion.summary,
+            //                    '</h6>'
+            //                ].join('\n');
+            //            }
+            //        },
+            //        source: remoteHandler
+            //    }
+            //).on('typeahead:selected', function (e, o) {
+            //    window.location.href = "https://www.nuget.org/packages/" + o.id;
+            //})
+            //    .on('typeahead:selected', function (e, o) {
+            //        $("#query").focus().select();
+            //    });
+        }
+
+        $("#query").focus().select();
+    });
+</script>
+}
+

@@ -1,0 +1,11 @@
+﻿@model SearchForm
+<div class="row text-center" style="margin-top:20px;">
+    <div class="col-lg-12">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="输入搜索文本..." id="query" name="@Html.NameFor(m=>m.Query).ToLowerInvariant()" value="@Model.Query" autocomplete="off">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Go!</button>
+            </span>
+        </div><!-- /input-group -->
+    </div><!-- /.col-lg-6 -->
+</div>

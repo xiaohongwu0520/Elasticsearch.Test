@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+    <PackageReference Include="NEST" Version="6.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Alvin.Core">
+      <HintPath>..\Libraries\Alvin.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Alvin.Data">
+      <HintPath>..\Libraries\Alvin.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Alvin.Services">
+      <HintPath>..\Libraries\Alvin.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="Alvin.Web.Framework">
+      <HintPath>..\Libraries\Alvin.Web.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
