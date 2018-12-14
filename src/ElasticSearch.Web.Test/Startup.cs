@@ -36,7 +36,7 @@ namespace ElasticSearch.Web.Test
 
             services.AddDbContext<AlvinObjectContext>(optionsBuilder =>
             {
-                var connection = @"Data Source=.;Initial Catalog=NopCommerceNew;Integrated Security=False;Persist Security Info=False;User ID=sa;Password=123456";
+                var connection = @"Data Source=.;Initial Catalog=NopCommerce;Integrated Security=False;Persist Security Info=False;User ID=sa;Password=123456";
                 optionsBuilder.UseLazyLoadingProxies().UseSqlServer(connection).ConfigureWarnings(warnings => warnings.Throw(CoreEventId.IncludeIgnoredWarning)); ;               
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
