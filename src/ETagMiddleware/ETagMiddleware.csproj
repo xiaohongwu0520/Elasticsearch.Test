@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+    <RootNamespace>BLun.ETagMiddleware</RootNamespace>
+    <Description>ETag Middleware for Asp.Net Core MVC6 for .NetStandard 2.0</Description>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageId>BLun.ETagMiddleware</PackageId>
+    <Title>BLun.ETagMiddleware</Title>
+    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <Authors>Björn Lundström (@github: BLun78)</Authors>
+    <Owners>@github: BLun78, Björn Lundström, Germany</Owners>
+    <RepositoryUrl>https://github.com/BLun78/ETagMiddleware.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Is supports Caching with Http Request Header 'If-None-Match' with Http Respons Header 'ETag' and set the HttpStatus tu 304. Http Request Header 'Cache-Controle' with 'no-cache' is integrated and would set the HttpStatus to 200.</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/BLun78/ETagMiddleware</PackageProjectUrl>
+    <PackageTags>ETag If-None-Match If-Modified-Since 304 Cache-Controle AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
+    <Copyright>Copyright 2018 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
+    <PackageVersion>1.2.2</PackageVersion>
+    <PackageVersionPrefix>1.2.2</PackageVersionPrefix>
+    <PackageVersionSuffix>
+    </PackageVersionSuffix>
+    <Version>1.2.2</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DocumentationFile>bin\Release\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DocumentationFile>bin\Debug\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="Attribute\" />
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Common\ETag.cs" />
+  </ItemGroup>
+</Project>

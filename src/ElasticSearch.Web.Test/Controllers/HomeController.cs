@@ -11,6 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Alvin.Core.Domain.Catalog;
 using System.Threading;
 using System.Text.Encodings.Web;
+using System.Text;
+using Microsoft.Net.Http.Headers;
+using BLun.ETagMiddleware;
 
 namespace ElasticSearch.Web.Test.Controllers
 {
@@ -117,10 +120,20 @@ namespace ElasticSearch.Web.Test.Controllers
             //ik_smart ik_max_word
             var analyzeResponse = client.Analyze(a => a
                     .Analyzer("ik_max_word")
-                    .Text("商品促销信息以商品详情页“促销”栏中的信息为准；商品的具体售价以订单结算页价格为准；如您发现活动商品售价或促销信息有异常，建议购买前先联系销售商咨询")
+                    .Text("商品促销信息以商品详情页“促销”栏中的信息为准；商品的具体售价以订单结算页价格为准；如您发现活动商品售价或促销信息有异常，建议购买前先联系销售商咨询桂林山水甲天下刘德华MIIDDJ")
             );
             ViewBag.AnalyzeTokens = analyzeResponse.Tokens;
             return View();
+        }
+
+        // Can add on controller
+        //[ETag(ETagAlgorithm = ETagAlgorithm.SHA521)]
+        public IActionResult ReadDic()
+        {
+            var str= $"刘德华{Environment.NewLine}刘一华{Environment.NewLine}MI";
+            //return Content(str, "text/plain;charset=utf-8");
+            var entityTag = new EntityTagHeaderValue("\"CalculatedEtagValue\"");
+            return File(Encoding.UTF8.GetBytes(str), "text/plain;charset=utf-8", "downloadName.txt", lastModified: DateTime.UtcNow.AddSeconds(-5), entityTag: entityTag);
         }
 
 
