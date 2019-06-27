@@ -44,7 +44,7 @@ namespace ElasticSearch.Web.Test
                 var connection = @"Data Source=.;Initial Catalog=NopCommerce;Integrated Security=False;Persist Security Info=False;User ID=sa;Password=123456";
                 optionsBuilder.UseLazyLoadingProxies().UseSqlServer(connection).ConfigureWarnings(warnings => warnings.Throw(CoreEventId.IncludeIgnoredWarning)); ;
             });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                              .AddJsonOptions(
                                  options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                              );
@@ -86,12 +86,15 @@ namespace ElasticSearch.Web.Test
             var provider = new FileExtensionContentTypeProvider
             {
                 Mappings = { [".txt"] = MimeTypes.TextPlain }
-            };
+            };          
+            
+            app.UseStaticFiles();
             var staticfile = new StaticFileOptions();
             staticfile.FileProvider = new PhysicalFileProvider(@"F:\xhw\Projects\Elasticsearch.Test\src\ElasticSearch.Web.Test\wwwroot\dic");
             //staticfile.RequestPath = new PathString("/dic");
             staticfile.ContentTypeProvider = provider;
             app.UseStaticFiles(staticfile);
+
             app.UseCookiePolicy();
 
             // Add a Middleware for each Controller Request
