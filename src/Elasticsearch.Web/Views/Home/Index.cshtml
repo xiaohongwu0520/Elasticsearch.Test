@@ -1,0 +1,15 @@
+﻿@using Nest;
+@{
+    ViewData["Title"] = "Home Page";
+    var tokens = (IReadOnlyCollection<AnalyzeToken>)ViewBag.AnalyzeTokens;
+}
+
+@foreach (var t in tokens)
+{
+
+    <span>@t.Token</span>
+}
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

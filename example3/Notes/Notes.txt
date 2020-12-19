@@ -1,0 +1,343 @@
+﻿** Notes for creating a CRUD **
+
+https://www.elastic.co/guide/en/elasticsearch/guide/current/mapping-intro.html
+** Mention typing
+
+
+** CREATE
+
+
+PUT crud_sample
+{
+  "mappings": {
+    "Customer_Info" : {
+      "properties": { 
+        "_id":{
+         "type": "long"
+        },
+        "name":{
+          "type": "string",
+          "index" : "not_analyzed"
+        },
+        "age":{
+          "type": "integer"
+        },
+        "birthday":{
+          "type": "date",
+          "format": "basic_date"
+        },
+        "hasChildren":{
+          "type": "boolean"
+        },
+        "enrollmentFee":{
+          "type": "double"
+        }
+      }
+    }
+  }
+}
+
+Analyzer option for plain text:
+https://www.elastic.co/guide/en/elasticsearch/guide/current/mapping-intro.html#custom-field-mappings
+https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_exact_values.html
+
+
+Date format:
+https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html
+
+
+** _id field
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-id-field.html
+https://www.elastic.co/guide/en/elasticsearch/guide/current/index-doc.html
+(fixed, autogenerate etc)
+
+** NULL fields
+
+https://www.elastic.co/guide/en/elasticsearch/guide/current/_dealing_with_null_values.html
+
+
+
+** CHECK
+
+GET /crud_sample/_mapping
+
+
+
+** ADD NEW Field
+
+
+PUT /crud_sample/_mapping/Customer_Info
+{
+  "properties" : {
+    "opinion" : {
+     "type" : "string",
+	 "index" : "not_analyzed"
+    }
+  }
+}
+
+
+
+**DELETE
+
+delete crud_sample
+
+
+
+
+
+** INSERT
+
+PUT /crud_sample/Customer_Info/10
+{
+  "age" : 32,
+  "birthday": "19830120",
+  "enrollmentFee": 175.25,
+  "hasChildren": false,
+  "name": "PH",
+  "opinion": "It's Ok, I guess..."
+}
+
+
+** CHECK
+
+GET /crud_sample/Customer_Info/_search
+
+
+** BULK 
+https://www.elastic.co/guide/en/elasticsearch/reference/1.4/docs-bulk.html
+
+POST /crud_sample/Customer_Info/_bulk
+{"index": { "_id": 1 }}
+{"age" : 32, "birthday": "19830120", "enrollmentFee": 175.25, "hasChildren": false, "name": "PH", "opinion": "It's cool, I guess..." }
+{"index": { "_id": 2 }}
+{"age" : 32, "birthday": "19830215", "enrollmentFee": 175.25, "hasChildren": true, "name": "Marcel", "opinion": "It's very nice!" }
+{"index": { "_id": 3 }}
+{"age" : 62, "birthday": "19530215", "enrollmentFee": 205.25, "hasChildren": false, "name": "Mayra", "opinion": "I'm too old for that!" }
+{"index": { "_id": 4 }}
+{"age" : 32, "birthday": "19830101", "enrollmentFee": 100.10, "hasChildren": false, "name": "Juan", "opinion": "¿Qué tal estás?" }
+{"index": { "_id": 5 }}
+{"age" : 30, "birthday": "19850101", "enrollmentFee": 100.10, "hasChildren": true, "name": "Cezar", "opinion": "Just came for the food..." }
+{"index": { "_id": 6 }}
+{"age" : 42, "birthday": "19730101", "enrollmentFee": 50.00, "hasChildren": true, "name": "Vanda", "opinion": "Where am I again?" }
+{"index": { "_id": 7 }}
+{"age" : 42, "birthday": "19730101", "enrollmentFee": 65.00, "hasChildren": false, "name": "Nice", "opinion": "What were u saying again?" }
+{"index": { "_id": 8 }}
+{"age" : 22, "birthday": "19930101", "enrollmentFee": 150.10, "hasChildren": false, "name": "Telks", "opinion": "Can we go out now?" }
+{"index": { "_id": 9 }}
+{"age" : 32, "birthday": "19830120", "enrollmentFee": 175.25, "hasChildren": false, "name": "Rafael", "opinion": "Should be fine..." }
+
+
+GET /crud_sample/Customer_Info/_search
+GET crud_sample/Customer_Info/5
+
+
+
+** Update
+https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html
+https://www.elastic.co/guide/en/elasticsearch/guide/current/update-doc.html
+
+POST /crud_sample/Customer_Info/3/_update
+{
+  "doc": {
+    "opnion": "I'm really too old for it."
+  }
+}
+
+
+GET crud_sample/Customer_Info/3
+
+
+
+
+** Querying
+
+https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_exact_values.html
+
+
+GET /crud_sample/Customer_Info/_search
+{
+    "query" : {
+        "filtered" : { 
+            "query" : {
+                "match_all" : {} 
+            },
+            "filter" : {
+                "term" : { 
+                    "opinion" : "It's Ok, I guess..."
+                }
+            }
+        }
+    }
+}
+
+
+https://www.elastic.co/guide/en/elasticsearch/guide/current/combining-filters.html
+
+GET /crud_sample/Customer_Info/_search
+{
+   "query" : {
+      "filtered" : { 
+         "filter" : {
+            "bool" : {
+              "must" : {
+                 "term" : {"hasChildren" : false} 
+              },
+              "must_not": [ 
+                { "term": { "name": "PH"  }},
+                { "term": { "name": "Felix"  }}
+              ],
+              "should" : [
+                 { "term" : {"age" : 30}}, 
+                 { "term" : {"age" : 31}}, 
+                 { "term" : {"age" : 32}} 
+              ]
+           }
+         }
+      }
+   }
+}
+
+
+https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html
+
+GET /crud_sample/Customer_Info/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "terms" : { 
+                    "age" : [22, 62]
+                }
+            }
+        }
+    }
+}
+
+
+https://www.elastic.co/guide/en/elasticsearch/guide/current/_ranges.html
+
+GET /crud_sample/Customer_Info/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "range" : {
+                    "enrollmentFee" : {
+                        "gte" : 10,
+                        "lt"  : 100
+                    }
+                }
+            }
+        }
+    }
+}
+
+GET /crud_sample/Customer_Info/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "range" : {
+                    "birthday" : {
+                        "gt" : "19820101",
+                        "lt" : "19840101"
+                    }
+                }
+            }
+        }
+    }
+}
+
+GET /crud_sample/Customer_Info/_search
+{
+  "query" : {
+    "filtered" : {
+        "filter" : {
+          "bool": { 
+            "must": [
+                {"range": {"enrollmentFee": { "gte": 100, "lte": 200 }}},
+                {"range": {"birthday": { "gte": "19850101" }}}
+            ]
+          }
+        }
+     }
+  }
+}
+
+
+
+
+
+
+
+
+Aggregations:
+https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html
+
+
+GET /crud_sample/Customer_Info/_search?search_type=count
+{
+  "aggregations": {
+    "my_agg": {
+      "terms": {
+        "field": "name",
+         "size": 1000
+      }
+    }
+  }
+}
+
+
+GET /crud_sample/Customer_Info/_search?search_type=count
+{
+    "aggs" : {
+        "min_price" : { "min" : { "field" : "enrollmentFee" } }
+    }
+}
+
+
+GET /crud_sample/Customer_Info/_search?search_type=count
+{
+    "aggs" : {
+        "avg_grade" : { "avg" : { "field" : "age" } }
+    }
+}
+
+
+GET /crud_sample/Customer_Info/_search?search_type=count
+{
+    "aggs" : {
+        "grades_stats" : { "extended_stats" : { "field" : "enrollmentFee" } }
+    }
+}
+
+
+GET /crud_sample/Customer_Info/_search?search_type=count
+{
+   "aggs": {
+      "colors": {
+         "terms": {
+            "field": "hasChildren"
+         },
+         "aggs": { 
+            "avg_age": { 
+               "avg": {
+                  "field": "age" 
+               }
+            }
+         }
+      }
+   }
+}
+
+
+
+Nest.net Querying
+https://github.com/elastic/elasticsearch-net/tree/master/src/Nest#nest-
+
+
+Tip, check RequestInformation:
+_EsClientDAL.Current.Search<DTO.Customer>(..lots of lambda...).RequestInformation.Request
+
